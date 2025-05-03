@@ -5,8 +5,8 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "PyHolfuy"
-version = "0.0"
+name = "pyholfuy"
+version = "0.1"
 description = "A Python library for interacting with Holfuy weather stations."
 authors = [{name="Håvard Dagenborg", email="haavardj@dagenborg.net"}]
 license = "MIT"
