@@ -6,7 +6,6 @@ import logging
 from typing import Any
 
 import aiohttp
-import async_timeout
 
 from .const import (
     CONF_TEMPERATURE_UNIT_CELSUIS,
@@ -21,6 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 
 API_URL = "http://api.holfuy.com/live/"
 
+# noqa: E501
 #### API Description
 # URL Format:  http://api.holfuy.com/live/?s=101&pw=pass&m=JSON&tu=C&su=m/s
 #
@@ -104,7 +104,7 @@ class HolfuyService:
             params["s"] = STATIONS_ALL
 
         try:
-            async with async_timeout.timeout(TIMEOUT):
+            async with asyncio.timeout(TIMEOUT):
                 resp = await self._websession.get(self._api_url, params=params)
 
             if resp.status >= 400:
@@ -113,8 +113,9 @@ class HolfuyService:
 
             result = await resp.json()
 
-            # Request for a single station is not enveloped in a list of measurements objects.
-            # Make data consistent for all request types before it is returned.
+            # Request for a single station is not enveloped in a list of
+            # measurements objects. Make data consistent for all request types before it
+            #  is returned.
             if stations and len(stations) == 1:
                 result = {"measurements": result}
 
