@@ -8,7 +8,7 @@ from typing import Any
 import aiohttp
 
 from .const import (
-    CONF_TEMPERATURE_UNIT_CELSUIS,
+    CONF_TEMPERATURE_UNIT_CELSIUS,
     CONF_WIND_SPEED_UNIT_MS,
     CONF_AVERAGING_NEWEST,
     CONF_MODE_JSON,
@@ -46,7 +46,7 @@ class HolfuyService:
         self,
         api_key: str,
         websession=None,
-        temperature_unit=CONF_TEMPERATURE_UNIT_CELSUIS,
+        temperature_unit=CONF_TEMPERATURE_UNIT_CELSIUS,
         wind_speed_unit=CONF_WIND_SPEED_UNIT_MS,
         timestamps_in_utc=False,
     ) -> None:
