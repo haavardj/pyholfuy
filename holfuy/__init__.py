@@ -117,7 +117,7 @@ class HolfuyService:
             # measurements objects. Make data consistent for all request types before it
             #  is returned.
             if stations and len(stations) == 1:
-                result = {"measurements": result}
+                result = {"measurements": [result]}
 
             return result
 
