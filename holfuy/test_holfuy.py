@@ -1,15 +1,15 @@
 import asyncio
-from unittest import IsolatedAsyncioTestCase
-from unittest.mock import AsyncMock
+from unittest import IsolatedAsyncioTestCase, mock
+from unittest.mock import AsyncMock, patch
 import json
 
 import aiohttp
 
-RESP_142 =  """{"stationId":142,"stationName":"THPK Ersfjord","location":{"latitude":"69.70017",
+RESP_142 =  json.loads("""{"stationId":142,"stationName":"THPK Ersfjord","location":{"latitude":"69.70017",
 "longitude":"18.63842","altitude":130},"dateTime":"2025-05-19 15:45:00","wind":{"speed":9.4,"gust":13.3,"min":0,
-"unit":"m/s","direction":245},"battery":4.15,"daily":{"max_temp":0,"min_temp":0},"temperature":0}"""
+"unit":"m/s","direction":245},"battery":4.15,"daily":{"max_temp":0,"min_temp":0},"temperature":0}""")
 
-RESP_ALL = """{"measurements":[{"stationId":142,"stationName":"THPK Ersfjord","location":{"latitude":"69.70017",
+RESP_ALL = json.loads("""{"measurements":[{"stationId":142,"stationName":"THPK Ersfjord","location":{"latitude":"69.70017",
 "longitude":"18.63842","altitude":130},"dateTime":"2025-05-19 15:45:00","wind":{"speed":9.4,"gust":13.3,"min":0,
 "unit":"m/s","direction":245},"battery":4.15,"daily":{"max_temp":0,"min_temp":0},"temperature":0},
 {"stationId":207,"stationName":"THPK Finnvikdalen","location":{"latitude":"69.76117",
@@ -18,11 +18,11 @@ RESP_ALL = """{"measurements":[{"stationId":142,"stationName":"THPK Ersfjord","l
 "daily":{"max_temp":7.5,"min_temp":4.5},"temperature":4.7},{"stationId":299,"stationName":"THPK Fjellheisen",
 "location":{"latitude":"69.63116","longitude":"18.99377","altitude":420},"dateTime":"2025-05-19 15:45:00",
 "wind":{"speed":7.8,"gust":10.3,"min":0,"unit":"m/s","direction":256},"battery":4.14,
-"daily":{"max_temp":5.7,"min_temp":0},"temperature":3.6}]}"""
+"daily":{"max_temp":5.7,"min_temp":0},"temperature":3.6}]}""")
 
-RESP_AUTHERROR="""
+RESP_AUTHERROR=json.loads("""
 {"measurements":[{"stationId":105,"error":"Sorry, you don't have access for this station.","errorCode":"no_access"},
-{"stationId":106,"error":"Sorry, you don't have access for this station.","errorCode":"no_access"}]}"""
+{"stationId":106,"error":"Sorry, you don't have access for this station.","errorCode":"no_access"}]}""")
 
 from holfuy import HolfuyService
 
@@ -51,7 +51,7 @@ class TestHolfuyService(IsolatedAsyncioTestCase):
 
         mock_resp = AsyncMock()
         mock_resp.status = 200
-        mock_resp.json = AsyncMock(return_value=json.loads(mock_response))
+        mock_resp.json = AsyncMock(return_value=mock_response)
 
         self.session.get = AsyncMock(return_value=mock_resp)
 
@@ -80,8 +80,7 @@ class TestHolfuyService(IsolatedAsyncioTestCase):
         mock_resp = AsyncMock()
         mock_resp.status = 200
         mock_resp.json = AsyncMock(return_value=mock_response)
-
-        self.session.get = AsyncMock(return_value=mock_resp)
+        self.session.get = AsyncMock(return_value= mock_resp)
 
         result = await self.api.fetch_data(None)
 
@@ -118,7 +117,7 @@ class TestHolfuyService(IsolatedAsyncioTestCase):
         mock_resp.status = 200
         mock_response =  RESP_AUTHERROR
 
-        mock_resp.json = AsyncMock(return_value=json.loads(mock_response))
+        mock_resp.json = AsyncMock(return_value=mock_response)
 
         self.session.get = AsyncMock(return_value=mock_resp)
 
