@@ -6,6 +6,7 @@ import logging
 from typing import Any
 
 import aiohttp
+from aiohttp import ClientSession
 
 from .const import (
     CONF_TEMPERATURE_UNIT_CELSIUS,
@@ -45,10 +46,10 @@ class HolfuyService:
     def __init__(
         self,
         api_key: str,
-        websession=None,
-        temperature_unit=CONF_TEMPERATURE_UNIT_CELSIUS,
-        wind_speed_unit=CONF_WIND_SPEED_UNIT_MS,
-        timestamps_in_utc=False,
+        session: ClientSession,
+        temperature_unit:str=CONF_TEMPERATURE_UNIT_CELSIUS,
+        wind_speed_unit:str=CONF_WIND_SPEED_UNIT_MS,
+        timestamps_in_utc:bool=False,
     ) -> None:
         """Initialize the Weather object."""
 
@@ -57,16 +58,8 @@ class HolfuyService:
         self._wind_speed_unit = wind_speed_unit
         self._temperature_unit = temperature_unit
         self._timestamps_in_utc = timestamps_in_utc
+        self._session = session
 
-        if websession is None:
-
-            async def _create_session():
-                return aiohttp.ClientSession()
-
-            loop = asyncio.get_event_loop()
-            self._websession = loop.run_until_complete(_create_session())
-        else:
-            self._websession = websession
 
     async def fetch_data(
         self,
@@ -104,8 +97,9 @@ class HolfuyService:
             params["s"] = STATIONS_ALL
 
         try:
+
             async with asyncio.timeout(TIMEOUT):
-                resp = await self._websession.get(self._api_url, params=params)
+                resp = await self._session.get(self._api_url, params=params)
 
             if resp.status >= 400:
                 _LOGGER.error("%s returned %s", self._api_url, resp.status)
